@@ -9,4 +9,5 @@ public interface Constant {
     String TEST_TOPIC_1 = "test-topic-1";
     String TEST_TOPIC_2 = "test-topic-2";
     String ORDERLY_TOPIC = "orderly_topic";
+    String TRANSACTION_TOPIC = "transaction-topic";
 }

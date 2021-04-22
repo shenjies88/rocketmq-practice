@@ -5,6 +5,7 @@ import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,15 @@ public class MqController {
         });
         //Send messages orderly
         rocketMQTemplate.syncSendOrderly(ORDERLY_TOPIC, MessageBuilder.withPayload("Hello, World").build(), "hashkey");
+    }
+
+    @PostMapping("/sendTransaction")
+    public void sendTransaction() {
+        // Build a SpringMessage for sending in transaction
+        Message msg = MessageBuilder.withPayload("test transaction").build();
+        // In sendMessageInTransaction(), the first parameter transaction name ("test")
+        // must be same with the @RocketMQTransactionListener's member field 'transName'
+        rocketMQTemplate.sendMessageInTransaction(TRANSACTION_TOPIC, msg, null);
     }
 
     @PostMapping("/receive")
