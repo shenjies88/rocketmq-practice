@@ -1,22 +1,17 @@
 package com.shenjies88.practice.rocketmq;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.shenjies88.practice.rocketmq.Constant.*;
 
@@ -44,12 +39,19 @@ public class MqController {
             public void onSuccess(SendResult var1) {
                 System.out.printf("async onSucess SendResult=%s %n", var1);
             }
+
             @Override
             public void onException(Throwable var1) {
                 System.out.printf("async onException Throwable=%s %n", var1);
             }
         });
         //Send messages orderly
-        rocketMQTemplate.syncSendOrderly(ORDERLY_TOPIC,MessageBuilder.withPayload("Hello, World").build(),"hashkey");
+        rocketMQTemplate.syncSendOrderly(ORDERLY_TOPIC, MessageBuilder.withPayload("Hello, World").build(), "hashkey");
+    }
+
+    @PostMapping("/receive")
+    public void receive() {
+        List<String> receive = rocketMQTemplate.receive(String.class);
+        System.out.printf("receive from rocketMQTemplate, messages=%s %n", receive);
     }
 }
